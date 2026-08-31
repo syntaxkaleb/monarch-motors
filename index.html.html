@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monarch Motors | Quality Pre-Owned Vehicles</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandDark: '#0B0C10',
+                        brandCharcoal: '#15161B',
+                        brandCard: '#1E2026',
+                        brandRed: '#E5252A',
+                        brandRedHover: '#C41C20',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-brandDark text-gray-100 font-sans antialiased min-h-screen flex flex-col justify-between">
+
+    <header class="sticky top-0 z-50 bg-brandCharcoal/95 backdrop-blur border-b border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <a href="#" class="flex items-center space-x-3">
+                <img src="watermarked_img_17503926341522989121.jpg" alt="Monarch Motors Logo" class="h-10 w-auto object-contain rounded">
+                <span class="text-2xl font-black tracking-wider uppercase text-white">MONARCH <span class="text-brandRed">MOTORS</span></span>
+            </a>
+            <nav class="hidden md:flex space-x-8 font-medium text-sm text-gray-300">
+                <a href="#inventory" class="hover:text-brandRed transition">Inventory</a>
+                <a href="#contact" class="hover:text-brandRed transition">Contact</a>
+            </nav>
+            <a href="#inventory" class="hidden md:inline-block bg-brandRed text-white font-bold px-5 py-2.5 rounded-lg hover:bg-brandRedHover transition shadow-md uppercase tracking-wider text-xs">
+                View Inventory
+            </a>
+        </div>
+    </header>
+
+    <section class="relative bg-gradient-to-b from-brandCharcoal via-brandDark to-brandDark py-20 px-4 text-center border-b border-gray-800/80">
+        <div class="max-w-4xl mx-auto flex flex-col items-center">
+            <img src="watermarked_img_17503926341522989121.jpg" alt="Monarch Emblem" class="h-28 w-auto mb-6 rounded-lg shadow-2xl border border-gray-800 drop-shadow-[0_10px_20px_rgba(229,37,42,0.15)]">
+
+            <span class="text-brandRed uppercase font-bold text-xs tracking-widest border border-brandRed/30 px-3 py-1 rounded-full bg-brandRed/10">
+                Quality Used Vehicles For Every Budget
+            </span>
+            <h1 class="text-3xl sm:text-5xl font-black text-white mt-4 mb-4 leading-tight uppercase tracking-tight">
+                Reliable Daily Drivers. <br><span class="text-brandRed">Unbeatable Value.</span>
+            </h1>
+            <p class="text-gray-400 text-base sm:text-lg mb-8 max-w-2xl">
+                From affordable starter cars to dependable family SUVs, we offer thoroughly inspected pre-owned vehicles at fair, no-nonsense prices.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4 w-full sm:w-auto">
+                <a href="#inventory" class="bg-brandRed text-white font-bold px-8 py-4 rounded-lg text-base uppercase tracking-wider hover:bg-brandRedHover transition shadow-lg shadow-brandRed/20">
+                    Browse All Stock
+                </a>
+                <a href="#contact" class="border border-gray-700 hover:border-brandRed text-white font-semibold px-8 py-4 rounded-lg text-base transition">
+                    Book a Test Drive
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="inventory" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
+            <div>
+                <h2 class="text-3xl font-extrabold text-white uppercase tracking-wide">Current Inventory</h2>
+                <p class="text-gray-400 mt-1">Click any vehicle photo to view all available images.</p>
+            </div>
+            
+            <div class="flex flex-wrap gap-2">
+                <button onclick="filterVehicles('all')" class="filter-btn bg-brandRed text-white px-5 py-2 rounded-md font-bold text-xs uppercase tracking-wider">All</button>
+                <button onclick="filterVehicles('sedan')" class="filter-btn bg-brandCard text-gray-300 hover:text-white px-5 py-2 rounded-md font-bold text-xs uppercase tracking-wider border border-gray-800 hover:border-brandRed transition">Sedans & Hatchbacks</button>
+                <button onclick="filterVehicles('suv')" class="filter-btn bg-brandCard text-gray-300 hover:text-white px-5 py-2 rounded-md font-bold text-xs uppercase tracking-wider border border-gray-800 hover:border-brandRed transition">SUVs & Crossovers</button>
+            </div>
+        </div>
+
+        <div id="car-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="text-center col-span-full py-12 text-gray-400">Loading inventory...</div>
+        </div>
+    </section>
+
+    <div id="gallery-modal" class="fixed inset-0 z-50 hidden bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
+        <button onclick="closeGallery()" class="absolute top-6 right-6 text-gray-400 hover:text-white text-3xl font-bold z-50">&times;</button>
+        <div class="max-w-4xl w-full flex flex-col items-center">
+            <div class="relative w-full flex items-center justify-center">
+                <button onclick="prevPhoto()" class="absolute left-2 bg-brandCard/80 hover:bg-brandRed text-white p-3 rounded-full transition z-10">&lang;</button>
+                <img id="modal-img" src="" class="max-h-[75vh] w-auto object-contain rounded-lg border border-gray-800 shadow-2xl">
+                <button onclick="nextPhoto()" class="absolute right-2 bg-brandCard/80 hover:bg-brandRed text-white p-3 rounded-full transition z-10">&rang;</button>
+            </div>
+            <div class="mt-4 flex items-center justify-between w-full px-2 text-sm text-gray-400">
+                <span id="modal-title" class="font-bold text-white text-base"></span>
+                <span id="modal-counter" class="bg-brandCard px-3 py-1 rounded-md border border-gray-800"></span>
+            </div>
+        </div>
+    </div>
+
+    <section id="contact" class="bg-brandCharcoal py-16 border-t border-gray-800">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-extrabold text-white uppercase tracking-wide">Have Questions?</h2>
+                <p class="text-gray-400 mt-2">Send us a message to check vehicle availability or schedule a test drive.</p>
+            </div>
+
+            <form action="https://api.web3forms.com/submit" method="POST" class="space-y-6 bg-brandDark p-8 rounded-2xl border border-gray-800 shadow-2xl">
+                <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_ACCESS_KEY">
+                <input type="hidden" name="subject" value="New Lead - Monarch Motors">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Your Name</label>
+                        <input type="text" name="name" required class="w-full bg-brandCard border border-gray-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brandRed transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Phone Number</label>
+                        <input type="tel" name="phone" required class="w-full bg-brandCard border border-gray-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brandRed transition">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Email Address</label>
+                    <input type="email" name="email" required class="w-full bg-brandCard border border-gray-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brandRed transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Message or Vehicle Interest</label>
+                    <textarea name="message" rows="4" required class="w-full bg-brandCard border border-gray-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brandRed transition" placeholder="I'm interested in learning more about..."></textarea>
+                </div>
+                <button type="submit" class="w-full bg-brandRed hover:bg-brandRedHover text-white font-bold py-4 rounded-lg text-base uppercase tracking-wider transition shadow-lg shadow-brandRed/20">
+                    Send Message
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <footer class="bg-brandDark py-8 border-t border-gray-900 text-center text-gray-500 text-xs uppercase tracking-wider">
+        <p>&copy; <span id="year"></span> Monarch Motors. Quality Pre-Owned Vehicles.</p>
+    </footer>
+
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        const SUPABASE_URL = 'https://zqynkfsyznyhocvgvyca.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_iJlly47sXR8AqaH2BQQIpA_pJG48WIK';
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let currentInventory = [];
+        let activeGalleryImages = [];
+        let activeGalleryIndex = 0;
+        let activeGalleryTitle = '';
+
+        async function fetchInventory() {
+            const { data, error } = await supabase.from('vehicles').select('*');
+            if (error) {
+                console.error(error);
+                document.getElementById('car-grid').innerHTML = '<div class="text-center col-span-full py-12 text-red-500">Error loading inventory. Check connection.</div>';
+                return;
+            }
+
+            currentInventory = data.map(car => ({
+                ...car,
+                images: Array.isArray(car.images) ? car.images : [],
+                specs: typeof car.specs === 'string' ? car.specs.split(',').map(s => s.trim()) : car.specs
+            }));
+
+            renderInventory(currentInventory);
+        }
+
+        function renderInventory(data) {
+            const grid = document.getElementById('car-grid');
+            if (data.length === 0) {
+                grid.innerHTML = '<div class="text-center col-span-full py-12 text-gray-400">No vehicles available at the moment.</div>';
+                return;
+            }
+            grid.innerHTML = data.map((car, index) => {
+                const primaryImage = car.images.length > 0 ? car.images[0] : 'https://via.placeholder.com/800x450?text=No+Photo+Available';
+                const photoCount = car.images.length;
+                
+                return `
+                <div class="bg-brandCard rounded-xl overflow-hidden border border-gray-800 hover:border-brandRed/50 transition-all duration-300 flex flex-col justify-between group">
+                    <div>
+                        <div class="relative overflow-hidden cursor-pointer" onclick="openGallery(${index})">
+                            <img src="${primaryImage}" alt="${car.title}" class="w-full h-48 object-cover group-hover:scale-105 transition duration-500">
+                            <span class="absolute top-3 right-3 bg-brandRed text-white font-black text-sm px-3 py-1 rounded-md shadow-md">
+                                ${car.price}
+                            </span>
+                            ${photoCount > 1 ? `
+                                <span class="absolute bottom-3 left-3 bg-brandDark/90 text-gray-200 text-xs font-bold px-2.5 py-1 rounded-md border border-gray-700 backdrop-blur">
+                                    <i class="fa-solid fa-camera mr-1 text-brandRed"></i> 1 / ${photoCount} Photos
+                                </span>
+                            ` : ''}
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-white mb-2">${car.title}</h3>
+                            <div class="text-xs text-gray-400 mb-4 flex gap-4 uppercase font-semibold">
+                                <span><i class="fa-solid fa-gauge mr-1 text-brandRed"></i>${car.mileage}</span>
+                                <span><i class="fa-solid fa-gear mr-1 text-brandRed"></i>${car.transmission}</span>
+                            </div>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                ${Array.isArray(car.specs) ? car.specs.map(s => `<span class="bg-brandDark text-gray-300 text-xs px-2.5 py-1 rounded border border-gray-800">${s}</span>`).join('') : ''}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6 pt-0 flex gap-2">
+                        <button onclick="openGallery(${index})" class="w-1/3 bg-brandDark hover:bg-gray-800 text-gray-300 font-bold py-3 rounded-lg border border-gray-800 transition uppercase tracking-wider text-xs">
+                            Photos
+                        </button>
+                        <a href="#contact" class="w-2/3 block text-center bg-brandRed hover:bg-brandRedHover text-white font-bold py-3 rounded-lg transition uppercase tracking-wider text-xs">
+                            Inquire
+                        </a>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        function openGallery(carIndex) {
+            const car = currentInventory[carIndex];
+            if (!car || !car.images || car.images.length === 0) return;
+            activeGalleryImages = car.images;
+            activeGalleryIndex = 0;
+            activeGalleryTitle = car.title;
+            updateGalleryModal();
+            document.getElementById('gallery-modal').classList.remove('hidden');
+        }
+
+        function closeGallery() { document.getElementById('gallery-modal').classList.add('hidden'); }
+        function updateGalleryModal() {
+            document.getElementById('modal-img').src = activeGalleryImages[activeGalleryIndex];
+            document.getElementById('modal-title').textContent = activeGalleryTitle;
+            document.getElementById('modal-counter').textContent = `${activeGalleryIndex + 1} / ${activeGalleryImages.length}`;
+        }
+        function nextPhoto() { activeGalleryIndex = (activeGalleryIndex + 1) % activeGalleryImages.length; updateGalleryModal(); }
+        function prevPhoto() { activeGalleryIndex = (activeGalleryIndex - 1 + activeGalleryImages.length) % activeGalleryImages.length; updateGalleryModal(); }
+        function filterVehicles(cat) {
+            if (cat === 'all') renderInventory(currentInventory);
+            else renderInventory(currentInventory.filter(item => item.category && item.category.toLowerCase() === cat.toLowerCase()));
+        }
+
+        fetchInventory();
+    </script>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monarch Motors - Add Inventory</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-black text-white p-6 min-h-screen flex items-center justify-center">
+
+    <div class="max-w-lg w-full bg-gray-900 p-8 rounded-xl border border-gray-800 shadow-2xl">
+        <div class="flex items-center space-x-3 mb-6">
+            <img src="watermarked_img_17503926341522989121.jpg" alt="Logo" class="h-8 w-auto rounded">
+            <h1 class="text-xl font-black text-red-600 uppercase tracking-wider">Add New Vehicle</h1>
+        </div>
+        
+        <form id="vehicle-form" class="space-y-4">
+            <div>
+                <label class="block text-xs uppercase font-bold text-gray-400 mb-1">Vehicle Title</label>
+                <input type="text" id="title" placeholder="2020 Nissan Pathfinder" required class="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white focus:outline-none focus:border-red-600">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs uppercase font-bold text-gray-400 mb-1">Price</label>
+                    <input type="text" id="price" placeholder="$6,000" required class="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white focus:outline-none focus:border-red-600">
+                </div>
+                <div>
+                    <label class="block text-xs uppercase font-bold text-gray-400 mb-1">Category</label>
+                    <select id="category" class="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white focus:outline-none focus:border-red-600">
+                        <option value="sedan">Sedan / Hatchback</option>
+                        <option value="suv">SUV / Crossover / Truck</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs uppercase font-bold text-gray-400 mb-1">Mileage</label>
+                    <input type="text" id="mileage" placeholder="142,000 km" required class="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white focus:outline-none focus:border-red-600">
+                </div>
+                <div>
+                    <label class="block text-xs uppercase font-bold text-gray-400 mb-1">Transmission</label>
+                    <input type="text" id="transmission" placeholder="Automatic" required class="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white focus:outline-none focus:border-red-600">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs uppercase font-bold text-gray-400 mb-1">Features / Specs (Comma Separated)</label>
+                <input type="text" id="specs" placeholder="3.5L V6, 3rd Row Seating, Clean Title" required class="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white focus:outline-none focus:border-red-600">
+            </div>
+
+            <div>
+                <label class="block text-xs uppercase font-bold text-gray-400 mb-1">Select All Photos (Tap & Select All 15+ Photos)</label>
+                <input type="file" id="photos" multiple accept="image/*" required class="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm">
+            </div>
+
+            <button type="submit" id="submit-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded uppercase tracking-wider transition mt-4 shadow-lg shadow-red-600/30">
+                Upload & Publish Vehicle
+            </button>
+        </form>
+
+        <p id="status-msg" class="text-center text-sm mt-4 font-bold"></p>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://zqynkfsyznyhocvgvyca.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_iJlly47sXR8AqaH2BQQIpA_pJG48WIK';
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        document.getElementById('vehicle-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            const status = document.getElementById('status-msg');
+            
+            btn.disabled = true;
+            status.textContent = 'Uploading photos to server, please wait...';
+            status.className = 'text-center text-sm mt-4 font-bold text-yellow-500';
+
+            try {
+                const files = document.getElementById('photos').files;
+                const imageUrls = [];
+
+                for (let file of files) {
+                    const fileName = `${Date.now()}-${file.name.replace(/\s+/g, '_')}`;
+                    const { data, error } = await supabase.storage
+                        .from('car-photos')
+                        .upload(fileName, file);
+
+                    if (error) throw error;
+
+                    const { data: publicUrlData } = supabase.storage
+                        .from('car-photos')
+                        .getPublicUrl(fileName);
+
+                    imageUrls.push(publicUrlData.publicUrl);
+                }
+
+                const { error: dbError } = await supabase
+                    .from('vehicles')
+                    .insert([{
+                        title: document.getElementById('title').value,
+                        price: document.getElementById('price').value,
+                        category: document.getElementById('category').value,
+                        mileage: document.getElementById('mileage').value,
+                        transmission: document.getElementById('transmission').value,
+                        specs: document.getElementById('specs').value,
+                        images: imageUrls
+                    }]);
+
+                if (dbError) throw dbError;
+
+                status.textContent = 'Vehicle and all photos published successfully!';
+                status.className = 'text-center text-sm mt-4 font-bold text-green-500';
+                document.getElementById('vehicle-form').reset();
+
+            } catch (err) {
+                console.error(err);
+                status.textContent = 'Error during upload. Please try again.';
+                status.className = 'text-center text-sm mt-4 font-bold text-red-500';
+            } finally {
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
