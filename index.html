@@ -36,11 +36,16 @@
             </a>
             <nav class="hidden md:flex space-x-8 font-medium text-sm text-gray-300">
                 <a href="#inventory" class="hover:text-brandRed transition">Inventory</a>
-                <a href="#contact" class="hover:text-brandRed transition">Contact</a>
+                <a href="#contact" class="hover:text-brandRed transition">Contact & Location</a>
             </nav>
-            <a href="#inventory" class="hidden md:inline-block bg-brandRed text-white font-bold px-5 py-2.5 rounded-lg hover:bg-brandRedHover transition shadow-md uppercase tracking-wider text-xs">
-                View Inventory
-            </a>
+            <div class="flex items-center space-x-4">
+                <a href="tel:2896774543" class="hidden sm:flex items-center text-sm font-bold text-gray-300 hover:text-brandRed transition">
+                    <i class="fa-solid fa-phone text-brandRed mr-2"></i> 289-677-4543
+                </a>
+                <a href="#inventory" class="bg-brandRed text-white font-bold px-5 py-2.5 rounded-lg hover:bg-brandRedHover transition shadow-md uppercase tracking-wider text-xs">
+                    View Inventory
+                </a>
+            </div>
         </div>
     </header>
 
@@ -103,40 +108,88 @@
         </div>
     </div>
 
-    <!-- Contact Form -->
+    <!-- Contact & Location Section -->
     <section id="contact" class="bg-brandCharcoal py-16 border-t border-gray-800">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6">
-            <div class="text-center mb-10">
-                <h2 class="text-3xl font-extrabold text-white uppercase tracking-wide">Have Questions?</h2>
-                <p class="text-gray-400 mt-2">Send us a message to check vehicle availability or schedule a test drive.</p>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-extrabold text-white uppercase tracking-wide">Contact & Location</h2>
+                <p class="text-gray-400 mt-2">Get in touch to confirm availability, schedule a test drive, or ask any questions.</p>
             </div>
 
-            <form action="https://api.web3forms.com/submit" method="POST" class="space-y-6 bg-brandDark p-8 rounded-2xl border border-gray-800 shadow-2xl">
-                <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_ACCESS_KEY">
-                <input type="hidden" name="subject" value="New Lead - Monarch Motors">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Your Name</label>
-                        <input type="text" name="name" required class="w-full bg-brandCard border border-gray-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brandRed transition">
+                <!-- Contact Info Box -->
+                <div class="bg-brandDark p-8 rounded-2xl border border-gray-800 space-y-6">
+                    <h3 class="text-xl font-bold text-white uppercase tracking-wider mb-4 border-b border-gray-800 pb-3">Dealership Info</h3>
+                    
+                    <div class="flex items-start space-x-4">
+                        <div class="bg-brandRed/10 border border-brandRed/30 p-3 rounded-lg text-brandRed">
+                            <i class="fa-solid fa-location-dot text-lg"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs uppercase font-bold text-gray-400">Location</p>
+                            <p class="text-sm font-semibold text-white mt-1 leading-relaxed">
+                                1099 Colborne St E,<br>
+                                Brantford, ON, N3T 0H4,<br>
+                                Canada
+                            </p>
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Phone Number</label>
-                        <input type="tel" name="phone" required class="w-full bg-brandCard border border-gray-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brandRed transition">
+
+                    <div class="flex items-start space-x-4">
+                        <div class="bg-brandRed/10 border border-brandRed/30 p-3 rounded-lg text-brandRed">
+                            <i class="fa-solid fa-phone text-lg"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs uppercase font-bold text-gray-400">Phone</p>
+                            <a href="tel:2896774543" class="text-sm font-semibold text-white hover:text-brandRed transition mt-1 block">
+                                289-677-4543
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-4">
+                        <div class="bg-brandRed/10 border border-brandRed/30 p-3 rounded-lg text-brandRed">
+                            <i class="fa-solid fa-envelope text-lg"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs uppercase font-bold text-gray-400">Email</p>
+                            <a href="mailto:monarchmotors23@gmail.com" class="text-sm font-semibold text-white hover:text-brandRed transition mt-1 block">
+                                monarchmotors23@gmail.com
+                            </a>
+                        </div>
                     </div>
                 </div>
-                <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Email Address</label>
-                    <input type="email" name="email" required class="w-full bg-brandCard border border-gray-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brandRed transition">
+
+                <!-- Direct Email Sender Form -->
+                <div class="lg:col-span-2">
+                    <div class="space-y-6 bg-brandDark p-8 rounded-2xl border border-gray-800 shadow-2xl">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Your Name</label>
+                                <input type="text" id="contact-name" class="w-full bg-brandCard border border-gray-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brandRed transition" placeholder="John Doe">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Phone Number</label>
+                                <input type="tel" id="contact-phone" class="w-full bg-brandCard border border-gray-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brandRed transition" placeholder="289-000-0000">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Subject</label>
+                            <input type="text" id="contact-subject" value="Vehicle Interest" class="w-full bg-brandCard border border-gray-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brandRed transition">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Message or Vehicle Interest</label>
+                            <textarea id="contact-message" rows="4" class="w-full bg-brandCard border border-gray-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brandRed transition" placeholder="I'm interested in learning more about..."></textarea>
+                        </div>
+                        <button onclick="sendDirectEmail()" class="w-full bg-brandRed hover:bg-brandRedHover text-white font-bold py-4 rounded-lg text-base uppercase tracking-wider transition shadow-lg shadow-brandRed/20 flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            <span>Send Message</span>
+                        </button>
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Message or Vehicle Interest</label>
-                    <textarea name="message" rows="4" required class="w-full bg-brandCard border border-gray-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brandRed transition" placeholder="I'm interested in learning more about..."></textarea>
-                </div>
-                <button type="submit" class="w-full bg-brandRed hover:bg-brandRedHover text-white font-bold py-4 rounded-lg text-base uppercase tracking-wider transition shadow-lg shadow-brandRed/20">
-                    Send Message
-                </button>
-            </form>
+
+            </div>
         </div>
     </section>
 
@@ -145,7 +198,7 @@
         <p>&copy; <span id="year"></span> Monarch Motors. Quality Pre-Owned Vehicles.</p>
     </footer>
 
-    <!-- Supabase Setup -->
+    <!-- Script Section -->
     <script>
         document.getElementById('year').textContent = new Date().getFullYear();
 
@@ -157,6 +210,26 @@
         let activeGalleryImages = [];
         let activeGalleryIndex = 0;
         let activeGalleryTitle = '';
+
+        function sendDirectEmail() {
+            const name = document.getElementById('contact-name').value;
+            const phone = document.getElementById('contact-phone').value;
+            const subject = document.getElementById('contact-subject').value || 'Vehicle Interest';
+            const userMsg = document.getElementById('contact-message').value;
+
+            let body = userMsg;
+            if (name || phone) {
+                body += `\n\n---\nSender Details:\nName: ${name || 'N/A'}\nPhone: ${phone || 'N/A'}`;
+            }
+
+            const mailtoUrl = `mailto:monarchmotors23@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            window.location.href = mailtoUrl;
+        }
+
+        function setInquiryVehicle(title) {
+            document.getElementById('contact-subject').value = `Vehicle Interest - ${title}`;
+            document.getElementById('contact-message').value = `Hi Monarch Motors, I am interested in learning more about the ${title}. Is it currently available?`;
+        }
 
         async function fetchInventory() {
             try {
@@ -175,7 +248,7 @@
                 currentInventory = data.map(car => ({
                     ...car,
                     images: Array.isArray(car.images) ? car.images : [],
-                    specs: typeof car.specs === 'string' ? car.specs.split(',').map(s => s.trim()) : (Array.isArray(car.specs) ? car.specs : [])
+                    specs: typeof car.specs === 'string' ? car.specs : ''
                 }));
 
                 renderInventory(currentInventory);
@@ -215,8 +288,9 @@
                                 <span><i class="fa-solid fa-gauge mr-1 text-brandRed"></i>${car.mileage}</span>
                                 <span><i class="fa-solid fa-gear mr-1 text-brandRed"></i>${car.transmission}</span>
                             </div>
-                            <div class="flex flex-wrap gap-2 mb-4">
-                                ${Array.isArray(car.specs) ? car.specs.map(s => `<span class="bg-brandDark text-gray-300 text-xs px-2.5 py-1 rounded border border-gray-800">${s}</span>`).join('') : ''}
+                            
+                            <div class="bg-brandDark/50 p-4 rounded-lg border border-gray-800 text-xs text-gray-300 whitespace-pre-line leading-relaxed mb-4 max-h-48 overflow-y-auto">
+                                ${car.specs}
                             </div>
                         </div>
                     </div>
@@ -224,7 +298,7 @@
                         <button onclick="openGallery(${index})" class="w-1/3 bg-brandDark hover:bg-gray-800 text-gray-300 font-bold py-3 rounded-lg border border-gray-800 transition uppercase tracking-wider text-xs">
                             Photos
                         </button>
-                        <a href="#contact" class="w-2/3 block text-center bg-brandRed hover:bg-brandRedHover text-white font-bold py-3 rounded-lg transition uppercase tracking-wider text-xs">
+                        <a href="#contact" onclick="setInquiryVehicle('${car.title.replace(/'/g, "\\'")}')" class="w-2/3 block text-center bg-brandRed hover:bg-brandRedHover text-white font-bold py-3 rounded-lg transition uppercase tracking-wider text-xs">
                             Inquire
                         </a>
                     </div>
