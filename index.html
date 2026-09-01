@@ -160,7 +160,7 @@
 
         async function fetchInventory() {
             try {
-                const { data, error } = await supabaseClient.from('vehicles').select('*');
+                const { data, error } = await supabaseClient.from('vehicles').select('*').order('created_at', { ascending: false });
                 if (error) {
                     console.error("Supabase Error:", error);
                     document.getElementById('car-grid').innerHTML = `<div class="text-center col-span-full py-12 text-red-500 font-bold">Error loading inventory: ${error.message}</div>`;
