@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monarch Motors | Quality Pre-Owned Vehicles</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         tailwind.config = {
@@ -25,6 +27,7 @@
 </head>
 <body class="bg-brandDark text-gray-100 font-sans antialiased min-h-screen flex flex-col justify-between">
 
+    <!-- Header Navigation -->
     <header class="sticky top-0 z-50 bg-brandCharcoal/95 backdrop-blur border-b border-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <a href="#" class="flex items-center space-x-3">
@@ -41,13 +44,12 @@
         </div>
     </header>
 
+    <!-- Hero Section -->
     <section class="relative bg-gradient-to-b from-brandCharcoal via-brandDark to-brandDark py-20 px-4 text-center border-b border-gray-800/80">
         <div class="max-w-4xl mx-auto flex flex-col items-center">
-            
             <span class="text-brandRed uppercase font-bold text-xs tracking-widest border border-brandRed/30 px-4 py-1.5 rounded-full bg-brandRed/10 mb-6">
                 Quality Used Vehicles For Every Budget
             </span>
-            
             <h1 class="text-3xl sm:text-5xl font-black text-white mb-4 leading-tight uppercase tracking-tight">
                 Reliable Daily Drivers. <br><span class="text-brandRed">Unbeatable Value.</span>
             </h1>
@@ -65,6 +67,7 @@
         </div>
     </section>
 
+    <!-- Inventory Section -->
     <section id="inventory" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
             <div>
@@ -84,6 +87,7 @@
         </div>
     </section>
 
+    <!-- Photo Gallery Modal -->
     <div id="gallery-modal" class="fixed inset-0 z-50 hidden bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
         <button onclick="closeGallery()" class="absolute top-6 right-6 text-gray-400 hover:text-white text-3xl font-bold z-50">&times;</button>
         <div class="max-w-4xl w-full flex flex-col items-center">
@@ -99,6 +103,7 @@
         </div>
     </div>
 
+    <!-- Contact Form -->
     <section id="contact" class="bg-brandCharcoal py-16 border-t border-gray-800">
         <div class="max-w-3xl mx-auto px-4 sm:px-6">
             <div class="text-center mb-10">
@@ -135,16 +140,18 @@
         </div>
     </section>
 
+    <!-- Footer -->
     <footer class="bg-brandDark py-8 border-t border-gray-900 text-center text-gray-500 text-xs uppercase tracking-wider">
         <p>&copy; <span id="year"></span> Monarch Motors. Quality Pre-Owned Vehicles.</p>
     </footer>
 
+    <!-- Supabase Setup -->
     <script>
         document.getElementById('year').textContent = new Date().getFullYear();
 
         const SUPABASE_URL = 'https://zqynkfsyznyhocvgvyca.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_iJlly47sXR8AqaH2BQQIpA_pJG48WIK';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let currentInventory = [];
         let activeGalleryImages = [];
@@ -152,20 +159,30 @@
         let activeGalleryTitle = '';
 
         async function fetchInventory() {
-            const { data, error } = await supabase.from('vehicles').select('*');
-            if (error) {
-                console.error(error);
-                document.getElementById('car-grid').innerHTML = '<div class="text-center col-span-full py-12 text-red-500">Error loading inventory. Check connection.</div>';
-                return;
+            try {
+                const { data, error } = await supabaseClient.from('vehicles').select('*');
+                if (error) {
+                    console.error("Supabase Error:", error);
+                    document.getElementById('car-grid').innerHTML = `<div class="text-center col-span-full py-12 text-red-500 font-bold">Error loading inventory: ${error.message}</div>`;
+                    return;
+                }
+
+                if (!data || data.length === 0) {
+                    document.getElementById('car-grid').innerHTML = '<div class="text-center col-span-full py-12 text-gray-400">No vehicles available at the moment.</div>';
+                    return;
+                }
+
+                currentInventory = data.map(car => ({
+                    ...car,
+                    images: Array.isArray(car.images) ? car.images : [],
+                    specs: typeof car.specs === 'string' ? car.specs.split(',').map(s => s.trim()) : (Array.isArray(car.specs) ? car.specs : [])
+                }));
+
+                renderInventory(currentInventory);
+            } catch (err) {
+                console.error("Fetch Error:", err);
+                document.getElementById('car-grid').innerHTML = `<div class="text-center col-span-full py-12 text-red-500 font-bold">Error loading inventory. Check connection.</div>`;
             }
-
-            currentInventory = data.map(car => ({
-                ...car,
-                images: Array.isArray(car.images) ? car.images : [],
-                specs: typeof car.specs === 'string' ? car.specs.split(',').map(s => s.trim()) : car.specs
-            }));
-
-            renderInventory(currentInventory);
         }
 
         function renderInventory(data) {
