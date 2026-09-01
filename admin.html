@@ -18,13 +18,13 @@
         <form id="vehicle-form" class="space-y-4">
             <div>
                 <label class="block text-xs uppercase font-bold text-gray-400 mb-1">Vehicle Title</label>
-                <input type="text" id="title" placeholder="2020 Nissan Pathfinder" required class="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white focus:outline-none focus:border-red-600">
+                <input type="text" id="title" placeholder="2018 Mazda Mazda3 Sport" required class="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white focus:outline-none focus:border-red-600">
             </div>
 
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="block text-xs uppercase font-bold text-gray-400 mb-1">Price</label>
-                    <input type="text" id="price" placeholder="$6,000" required class="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white focus:outline-none focus:border-red-600">
+                    <input type="text" id="price" placeholder="$11,995" required class="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white focus:outline-none focus:border-red-600">
                 </div>
                 <div>
                     <label class="block text-xs uppercase font-bold text-gray-400 mb-1">Category</label>
@@ -38,7 +38,7 @@
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="block text-xs uppercase font-bold text-gray-400 mb-1">Mileage</label>
-                    <input type="text" id="mileage" placeholder="142,000 km" required class="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white focus:outline-none focus:border-red-600">
+                    <input type="text" id="mileage" placeholder="172,350 km" required class="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white focus:outline-none focus:border-red-600">
                 </div>
                 <div>
                     <label class="block text-xs uppercase font-bold text-gray-400 mb-1">Transmission</label>
@@ -48,11 +48,11 @@
 
             <div>
                 <label class="block text-xs uppercase font-bold text-gray-400 mb-1">Features / Specs (Comma Separated)</label>
-                <input type="text" id="specs" placeholder="3.5L V6, 3rd Row Seating, Clean Title" required class="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white focus:outline-none focus:border-red-600">
+                <input type="text" id="specs" placeholder="2.0L 4 Cylinder, FWD, Heated Seats" required class="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white focus:outline-none focus:border-red-600">
             </div>
 
             <div>
-                <label class="block text-xs uppercase font-bold text-gray-400 mb-1">Select All Photos (Tap & Select All 15+ Photos)</label>
+                <label class="block text-xs uppercase font-bold text-gray-400 mb-1">Select All Photos</label>
                 <input type="file" id="photos" multiple accept="image/*" required class="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm">
             </div>
 
@@ -67,7 +67,7 @@
     <script>
         const SUPABASE_URL = 'https://zqynkfsyznyhocvgvyca.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_iJlly47sXR8AqaH2BQQIpA_pJG48WIK';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         document.getElementById('vehicle-form').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -83,21 +83,26 @@
                 const imageUrls = [];
 
                 for (let file of files) {
-                    const fileName = `${Date.now()}-${file.name.replace(/\s+/g, '_')}`;
-                    const { data, error } = await supabase.storage
+                    const cleanName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
+                    const fileName = `${Date.now()}-${cleanName}`;
+
+                    const { data, error } = await supabaseClient.storage
                         .from('car-photos')
                         .upload(fileName, file);
 
-                    if (error) throw error;
+                    if (error) {
+                        console.error('Storage Upload Error:', error);
+                        throw new Error(`Photo upload failed: ${error.message}`);
+                    }
 
-                    const { data: publicUrlData } = supabase.storage
+                    const { data: publicUrlData } = supabaseClient.storage
                         .from('car-photos')
                         .getPublicUrl(fileName);
 
                     imageUrls.push(publicUrlData.publicUrl);
                 }
 
-                const { error: dbError } = await supabase
+                const { error: dbError } = await supabaseClient
                     .from('vehicles')
                     .insert([{
                         title: document.getElementById('title').value,
@@ -109,15 +114,18 @@
                         images: imageUrls
                     }]);
 
-                if (dbError) throw dbError;
+                if (dbError) {
+                    console.error('Database Insert Error:', dbError);
+                    throw new Error(`Database save failed: ${dbError.message}`);
+                }
 
-                status.textContent = 'Vehicle and all photos published successfully!';
+                status.textContent = 'Vehicle and photos published successfully!';
                 status.className = 'text-center text-sm mt-4 font-bold text-green-500';
                 document.getElementById('vehicle-form').reset();
 
             } catch (err) {
-                console.error(err);
-                status.textContent = 'Error during upload. Please try again.';
+                console.error('Form Error:', err);
+                status.textContent = err.message || 'Error during upload. Please check browser console.';
                 status.className = 'text-center text-sm mt-4 font-bold text-red-500';
             } finally {
                 btn.disabled = false;
